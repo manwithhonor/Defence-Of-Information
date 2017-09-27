@@ -1,12 +1,12 @@
 Password=1488
-Path to dictionary=C:/Users/wu_tang_clan/OneDrive/proga/defence_of_information/dictionary.txt
-Path to data base=C:/Users/wu_tang_clan/OneDrive/proga/defence_of_information/DataBase.txt
+Path to dictionary=C:/Users/grey_cardinal/OneDrive/proga/Defence-Of-Information/dictionary.txt
+Path to data base=C:/Users/grey_cardinal/OneDrive/proga/Defence-Of-Information/DataBase.txt
 Policy configuration:
-number=0
+number=1
 spec_char=0
 small_letter=1
 big_letter=1
 in_dictionary=0
-simple_sequence=1
+simple_sequence=0
 KEY=8899aabbccddeeff0011223344556677fedcba98765432100123456789abcdef
 IV=abcdef12345600dacdef94756eeabefa

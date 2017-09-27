@@ -89,7 +89,7 @@ Config Administration::config_read(Config cfg){
 
     for (int counter=4; counter<10; counter++ ){
         flag=Administration::to_bool(rows[counter].data()[rows[counter].size()-2]);
-        qDebug()<<flag<<endl;
+        //qDebug()<<flag<<endl;
         switch(counter){
         case 4 :
             cfg.number=flag;
@@ -196,7 +196,9 @@ void Administration:: change_admin_pswd(QString pswd){
 
 QString Administration:: receive_admin_pswd(){
     QString admin_pswd;
+   //  qDebug()<<1;
     QFile file(Administration::get_path_to_adm_file());
+    // qDebug()<<2;
     if(file.open(QIODevice::ReadOnly |QIODevice::Text)){
         while (!file.atEnd()){
             QString line = file.readLine();
@@ -216,7 +218,19 @@ QString Administration:: receive_admin_pswd(){
 }
 
 QString Administration::receive_path_to_dictionary(){
-    QString path_to_dic;
+    QString path(QDir::currentPath());
+    int index,counter=0;
+    foreach(QChar c, path){
+        if ( (c=='/') ||(c=='\\' ) )   {
+        index=counter;
+        }
+        counter+=1;
+   }
+   QString k = path.mid(0, index+1);
+   k=k+"dictionary.txt";
+   return k;
+
+    /*QString path_to_dic;
     QFile file(Administration::get_path_to_adm_file());
     if(file.open(QIODevice::ReadOnly |QIODevice::Text)){
         while (!file.atEnd()){
@@ -233,11 +247,24 @@ QString Administration::receive_path_to_dictionary(){
            QMessageBox::information(0,"Report","Administration file doesn't open. You should contact your administrator.\n");
         }
                 file.close();
-                return path_to_dic;
+                return path_to_dic;*/
 }
 
 QString Administration:: receive_path_to_data_base(){
-    QString path_to_base;
+
+    QString path(QDir::currentPath());
+    int index,counter=0;
+    foreach(QChar c, path){
+        if ( (c=='/') ||(c=='\\' ) )   {
+        index=counter;
+        }
+        counter+=1;
+   }
+   QString k = path.mid(0, index+1);
+   k=k+"DataBase.txt";
+   return k;
+
+   /* QString path_to_base;
     QFile file(Administration::get_path_to_adm_file());
     if(file.open(QIODevice::ReadOnly |QIODevice::Text)){
         while (!file.atEnd()){
@@ -253,7 +280,7 @@ QString Administration:: receive_path_to_data_base(){
         QMessageBox::information(0,"Report","Administration file doesn't open. You should contact your administrator.\n");
         }
     file.close();
-    return path_to_base;
+    return path_to_base;*/
 }
 
 QString Administration:: receive_key(){

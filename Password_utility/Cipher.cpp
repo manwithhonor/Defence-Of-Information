@@ -122,9 +122,106 @@ vector<string> split(const string & s, char ch) {
     return v;
 }
 
+ByteBlock Cipher::keyDeriveFunction(QString stra){
+   //qDebug()<<1;
+   //QString str1 = "Test";
+   //QByteArray ba = stra.toLatin1();
+    // const char *str = ba.data();
+
+
+  // char *str = new char;
+    //str="my_fucking_password";
+
+
+     //char *a;
+   //  memcpy(str,stra.toLatin1(),stra.size());
+
+
+qDebug()<<"name="<<stra<<"\n";
+  const char * str = ( const char *) stra. toLocal8Bit().data();
+
+  // char *str = new char; //данные
+
+//qDebug()<<2;
+   HCRYPTPROV hCryptProv = 0;
+   HCRYPTHASH hHash = 0;
+   //gets(str);
+//stra.length();
+   DWORD count=strlen(str);
+   CryptAcquireContext(&hCryptProv, NULL, NULL, PROV_RSA_SCHANNEL, 0);
+   CryptCreateHash(hCryptProv, CALG_SHA, 0, 0, &hHash);
+   CryptHashData(hHash, (BYTE*)str, count, 0);
+//qDebug()<<3;
+   BYTE result0, hash_value[41];
+   DWORD dwDataLen = 40;
+
+   CryptGetHashParam(hHash, HP_HASHVAL,hash_value, &dwDataLen, 0);
+   cout<<endl;
+   //int f=(sizeof(hash_value)/sizeof(BYTE));
+   for(int i=0;i<20;i++) {
+       printf("%02x",hash_value[i]);
+      // result0[i]=hash_value[i];
+   }
+   ByteBlock result(hash_value, 32);
+   cout<<endl;
+   auto cipher_params = read_cipher_params();
+
+
+
+
+
+
+
+   /*int* arr = new int[32];// новый массив нужной тебе длины
+       for (int i = 0; i < 32; i++)
+       {
+           arr[i] = hash_value[i];// копирование
+       }*/
+     //  QString out;
+        // for (int i = 1; i < 32; ++i) {
+       //out.append(QString("%02x").arg(hash_value[i]));
+         //qDebug()<<QString("%02x").arg(hash_value[i]);
+         //}
+        // qDebug()<<out;
+   //return result;
+   return hex_to_bytes(cipher_params[0]);
+          // string resup= System::Text::Encoding::UTF8->GetString(hash_value, 0, hash_value->Length);
+//QString str2 = QString(QByteArray((const char*) hash_value));
+//cout<< typename (str2);
+        //QString qstr1 = QString::fromStdString(resup);
+       //delete[] Arr;// удаление старого
+
+   /*HCRYPTPROV hCryptProv = NULL;
+
+       if(CryptAcquireContext(&hCryptProv, NULL, NULL, PROV_RSA_FULL, CRYPT_VERIFYCONTEXT))
+       {
+           std::string strToKeyGen = "HELLO";
+
+               HCRYPTHASH hHash=NULL;
+
+               if(CryptCreateHash(hCryptProv,CALG_MD5,0,0,&hHash))
+               {
+                   if(CryptHashData(hHash,(const BYTE*)strToKeyGen.data(),strToKeyGen.size(),0))
+                   {
+                       HCRYPTKEY hCryptKey=NULL;
+                       if(CryptDeriveKey(hCryptProv,CALG_RC4,hHash, CRYPT_EXPORTABLE|(0x080<<0x10),&hCryptKey))
+                       {
+                           std::cout <<  hCryptKey << std::endl;
+                       }
+                   }
+                   CryptDestroyHash(hHash);
+               }
+
+       }*/
+}
+
+
 QString Cipher::myEncryption(){
     auto cipher_params = read_cipher_params();
-    ByteBlock key = hex_to_bytes(cipher_params[0]);
+
+   ByteBlock key =keyDeriveFunction(this->name);
+   //  ByteBlock key =hex_to_bytes(cipher_params[0]);
+
     ByteBlock iv = hex_to_bytes(cipher_params[1]);
     string fe=cipher_params[2];
     QString qstr = QString::fromStdString(fe);
@@ -136,23 +233,27 @@ QString Cipher::myEncryption(){
     CFB_Mode<Kuznyechik> encryptor(Kuznyechik(key), iv);
     encryptor.encrypt(message, output);   
     string result =hex_representation(output);
-    cout<< result<<endl;
+    cout<<"res="<< result<<endl;
     QString rerer = QString::fromStdString(result);
     return rerer;
 }
 
 QString Cipher::myDecryption(){
     auto  cipher_params = read_cipher_params();
-    cout<< cipher_params[0]<<endl;
-    cout<< cipher_params[1]<<endl;
-    cout<< cipher_params[2]<<endl;
-    ByteBlock key = hex_to_bytes(cipher_params[0]);
+   // cout<< cipher_params[0]<<endl;
+   // cout<< cipher_params[1]<<endl;
+   // cout<< cipher_params[2]<<endl;
+cout<<"text="<< cipher_params[2]<<endl;
+     ByteBlock key =keyDeriveFunction(this->name);
+    //ByteBlock key = hex_to_bytes(cipher_params[0]);
+
     ByteBlock iv = hex_to_bytes(cipher_params[1]);
     ByteBlock message1 = hex_to_bytes(cipher_params[2]);
     ByteBlock output;
     CFB_Mode<Kuznyechik> encryptor(Kuznyechik(key), iv);
     encryptor.decrypt(message1, output);
     string resup =hex_representation(output);
+    cout<<"out="<<resup;
     QString qstr1 = QString::fromStdString(resup);
     string realResilt = hexToString(qstr1);
     QString truRes = QString::fromStdString(realResilt);

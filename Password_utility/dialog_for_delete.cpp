@@ -46,7 +46,7 @@ void Dialog_for_delete::on_pushButton_3_clicked(){
             password=pswd.in_data_base_search(service_name);
             if (password!="") {
                 password=password.mid(0,password.size()-1);
-                Cipher  str1= Cipher(password);
+                Cipher  str1= Cipher(password, service_name+PIN);
                 QByteArray h = str1.myDecryption().toLocal8Bit();
                 QList<QByteArray> lst =  h.split(' ');
                 if(lst.count()>=2){

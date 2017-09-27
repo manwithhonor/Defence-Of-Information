@@ -26,6 +26,11 @@
 #include <sstream>
 #include "Kuznyechik.h"
 #include "mycrypto.h"
+#include <bcrypt.h>
+#include <cryptuiapi.h>
+//#include <boost/uuid/sha1.hpp>
+#include <windows.h>
+#include <wincrypt.h>
 
 using std::cout;
 using std::cerr;
@@ -36,18 +41,13 @@ using std::vector;
 using std::numeric_limits;
 
 
-
 int main(int argc, char *argv[])
-{/*
-//qDebug()<<QCoreApplication::applicationDirPath() ;
-    QString str = "  lots\t of\nwhitespace\r\n ";
-    str = str.simplified();
-qDebug()<<str;*/
+{
+//ByteBlock  mas= keyDeriveFunction("my_fucking_password");
 
+//return 0;
 
- //path.indexOf('/',0)
-
-    QApplication a(argc, argv);
+   QApplication a(argc, argv);
     MainWindow w;
     w.show();
     return a.exec();

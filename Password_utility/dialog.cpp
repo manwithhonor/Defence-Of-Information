@@ -44,6 +44,10 @@ void output_to_data_base(QString pswd,QString service_name){
 
     QByteArray password = pswd.toLocal8Bit();
     QFile file(Administration::receive_path_to_data_base());
+
+
+
+
     QList<QByteArray> rows;
     if (file.open(QIODevice::ReadOnly | QIODevice::Text)){
         while (!file.atEnd())
@@ -77,12 +81,12 @@ void Dialog::on_pushButton_clicked(){
                 if(PIN=='\0'){
                      QMessageBox::information(this,"Report","You forgot to enter PIN.\n");}
                  else{
-                        //Config cfg;
-                       // cfg=  pswd.check_all(password, cfg);
-                       // if (cfg.policy)
-                    if (1)
-                        {   password=password+" "+service_name;
-                            Cipher  str1= Cipher(password);
+                        Config cfg;
+                        cfg=  pswd.check_all(password, cfg);
+                        if (cfg.policy){
+                   // if (1)
+                           password=password+" "+service_name;
+                            Cipher  str1= Cipher(password,service_name+PIN);
                             output_to_data_base(str1.myEncryption(),service_name);
                         }
                      }
