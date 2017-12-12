@@ -43,14 +43,15 @@ void Dialog2::on_pushButton_3_clicked(){
             QMessageBox::information(this,"Report","You forgot to enter PIN.\n");
         }else{
             password=pswd.in_data_base_search(service_name);
-            QString s_data =password;
-            if (s_data!="") {
-                s_data=s_data.mid(0,s_data.size()-1);
-                Cipher  str1= Cipher(s_data, service_name+PIN);
+            if (password!="") {
+                password=password.mid(0,password.size()-1);
+                Cipher  str1= Cipher(password, service_name+PIN);
                 QString h=str1.myDecryption();
-                QStringList lst =  h.split(' ');
+
+               QStringList lst =  h.split('_');
+
                 if(lst.count()>=2){
-                    if(lst[1]==service_name){
+                    if( (lst[1]==service_name) || (lst[2].split(" ")[0].toInt()   ==PIN) ){
                         h=lst[0];
 
                         QMessageBox::information(this,"Report","Your password is:\n\n"+h+"\n\nIf you are not recognize your password, then entered PIN is not correct.");

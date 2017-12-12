@@ -28,9 +28,9 @@
 #include "mycrypto.h"
 #include <bcrypt.h>
 #include <cryptuiapi.h>
-//#include <boost/uuid/sha1.hpp>
 #include <windows.h>
 #include <wincrypt.h>
+#include "encryption.h"
 
 using std::cout;
 using std::cerr;
@@ -40,17 +40,16 @@ using std::getline;
 using std::vector;
 using std::numeric_limits;
 
-
 int main(int argc, char *argv[])
 {
-//ByteBlock  mas= keyDeriveFunction("my_fucking_password");
 
-//return 0;
 
    QApplication a(argc, argv);
     MainWindow w;
     w.show();
     return a.exec();
+
+
 
 }
 

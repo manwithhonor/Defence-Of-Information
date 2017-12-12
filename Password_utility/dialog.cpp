@@ -40,9 +40,9 @@ void Dialog::onButtonSend()
 }
 
 
-void output_to_data_base(QString pswd,QString service_name){
+void output_to_data_base(QByteArray pswd,QString service_name){
 
-    QByteArray password = pswd.toLocal8Bit();
+    QByteArray password = pswd;
     QFile file(Administration::receive_path_to_data_base());
 
 
@@ -85,8 +85,11 @@ void Dialog::on_pushButton_clicked(){
                         cfg=  pswd.check_all(password, cfg);
                         if (cfg.policy){
                    // if (1)
-                           password=password+" "+service_name;
-                            Cipher  str1= Cipher(password,service_name+PIN);
+                           password=password+"_"+service_name+"_"+QString::number(PIN);
+                            //Cipher  str1= Cipher(password,service_name+PIN);
+
+                           QByteArray ba = password.toLatin1();
+                            Cipher  str1= Cipher(ba,service_name+"_"+QString::number(PIN));
                             output_to_data_base(str1.myEncryption(),service_name);
                         }
                      }

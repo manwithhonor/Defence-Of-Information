@@ -117,8 +117,9 @@ QByteArray Password::in_data_base_search(QString service_name){
              name=lst[0];
              pswd=lst[1];
              if (name==service_name){
-                 password=pswd;
-             };
+                 password=pswd ;
+                 //password=pswd.mid(0,pswd.size()-1);
+                               };
          }
      }else{
          QMessageBox::information(0,"Report","Data file doesn't open. You should contact your administrator.\n");

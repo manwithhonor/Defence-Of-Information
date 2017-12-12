@@ -68,7 +68,7 @@ void Dialog_if_match::on_pushButton_3_clicked(){
                                 //if (1){
                                     new_password=new_password+" "+service_name;
                                     str1= Cipher(new_password.toLatin1(),service_name+new_PIN);
-                                    h=str1.myEncryption().toLocal8Bit();
+                                    h=str1.myEncryption();
                                     pswd.replace_in_data_base(service_name,  h);
                                     QMessageBox::information(this,"Report","Your password was succesfully replaced");
                                 }

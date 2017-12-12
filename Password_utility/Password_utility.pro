@@ -24,7 +24,8 @@ SOURCES += main.cpp\
     dialog_if_match.cpp \
     dialog.cpp \
     kuznyechik.cpp \
-    mycrypto.cpp
+    mycrypto.cpp \
+    encryption.cpp
 
 HEADERS  += \
     Cipher.h \
@@ -41,7 +42,8 @@ HEADERS  += \
     dialog.h \
     kuznyechik.h \
     mycrypto.h \
-    modes.h
+    modes.h \
+    encryption.h
 
 FORMS    += \
     mainwindow.ui \
