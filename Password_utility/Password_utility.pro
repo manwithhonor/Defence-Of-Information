@@ -22,10 +22,7 @@ SOURCES += main.cpp\
     administration.cpp \
     dialog_for_delete.cpp \
     dialog_if_match.cpp \
-    dialog.cpp \
-    kuznyechik.cpp \
-    mycrypto.cpp \
-    encryption.cpp
+    dialog.cpp
 
 HEADERS  += \
     Cipher.h \
@@ -39,11 +36,7 @@ HEADERS  += \
     administration.h \
     dialog_for_delete.h \
     dialog_if_match.h \
-    dialog.h \
-    kuznyechik.h \
-    mycrypto.h \
-    modes.h \
-    encryption.h
+    dialog.h
 
 FORMS    += \
     mainwindow.ui \

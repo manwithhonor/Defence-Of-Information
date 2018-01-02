@@ -47,17 +47,17 @@ void Dialog_for_delete::on_pushButton_3_clicked(){
             if (password!="") {
                 password=password.mid(0,password.size()-1);
                 Cipher  str1= Cipher(password, service_name+PIN);
-                QByteArray h = str1.myDecryption().toLocal8Bit();
-                QList<QByteArray> lst =  h.split(' ');
+                QString h = str1.myDecryption();
+                QStringList lst =  h.split('_');
                 if(lst.count()>=2){
-                    if(lst[1]==service_name){
+                   if( (lst[1]==service_name) || (lst[2].split(" ")[0].toInt()   ==PIN) ){
                         pswd.from_data_base_delete(service_name);
                         QMessageBox::information(this,"Report","Your password was succesfully delete");
                     }else{
                         QMessageBox::information(this,"Report","Your password wasn't found or entered service's name is wrong.");
                     }
                 }else{
-                    QMessageBox::information(this,"Report","Entered PIN is not correct.");
+                    QMessageBox::information(this,"Report","Entered data is not correct.");
                 }
             }else{
                 QMessageBox::information(this,"Report","Your password wasn't found or entered service's name is wrong.");

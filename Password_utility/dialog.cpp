@@ -86,13 +86,11 @@ void Dialog::on_pushButton_clicked(){
                         if (cfg.policy){
                    // if (1)
                            password=password+"_"+service_name+"_"+QString::number(PIN);
-                            //Cipher  str1= Cipher(password,service_name+PIN);
-
                            QByteArray ba = password.toLatin1();
-                            Cipher  str1= Cipher(ba,service_name+"_"+QString::number(PIN));
-                            output_to_data_base(str1.myEncryption(),service_name);
+                           Cipher  str1= Cipher(ba,service_name+"_"+QString::number(PIN));
+                           output_to_data_base(str1.myEncryption(),service_name);
                         }
-                     }
+                }
             }
         }
         else{

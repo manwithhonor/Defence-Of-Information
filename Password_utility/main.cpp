@@ -24,13 +24,11 @@
 #include <limits>
 #include <stdexcept>
 #include <sstream>
-#include "Kuznyechik.h"
-#include "mycrypto.h"
+
 #include <bcrypt.h>
 #include <cryptuiapi.h>
 #include <windows.h>
 #include <wincrypt.h>
-#include "encryption.h"
 
 using std::cout;
 using std::cerr;

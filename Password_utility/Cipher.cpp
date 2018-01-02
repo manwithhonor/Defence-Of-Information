@@ -36,8 +36,6 @@
 #include <limits>
 #include <stdexcept>
 #include <sstream>
-#include "Kuznyechik.h"
-#include "mycrypto.h"
 
 using std::cout;
 using std::cerr;
@@ -263,7 +261,7 @@ void  Cipher:: encryption(const u32 *roundKey, int amountOfRounds, u8 openedText
         t3 = makeTJTE(k++, s0, s1, s2, s3, roundKey);
     }
     roundKey += amountOfRounds << 2;
-#else  /* !FULL_UNROLL */
+#else
 
     r = amountOfRounds >> 1;
      while(1){
@@ -279,7 +277,7 @@ void  Cipher:: encryption(const u32 *roundKey, int amountOfRounds, u8 openedText
         s2 =Te0[(t2 >> 24)] ^Te1[(t3 >> 16) & 0xff] ^Te2[(t0 >>  8) & 0xff] ^Te3[(t1) & 0xff] ^roundKey[2];
         s3 =Te0[(t3 >> 24)] ^Te1[(t0 >> 16) & 0xff] ^Te2[(t1 >>  8) & 0xff] ^Te3[(t2) & 0xff] ^roundKey[3];
     }
-#endif /* ?FULL_UNROLL */
+#endif
 
     s0 =
             (Te4[(t0 >> 24)       ] & 0xff000000) ^
@@ -395,7 +393,7 @@ void  Cipher:: decryption(const u32 *roundKey, int amountOfRounds, const u8 ciph
     u32 s0, s1, s2, s3, t0, t1, t2, t3;
 #ifndef FULL_UNROLL
     int r;
-#endif /* ?FULL_UNROLL */
+#endif
 
 #ifdef FULL_UNROLL
     int k=0;
@@ -417,10 +415,7 @@ void  Cipher:: decryption(const u32 *roundKey, int amountOfRounds, const u8 ciph
         t3 = makeTJTD(k++, s0, s1, s2, s3, roundKey);
     }
     roundKey += amountOfRounds << 2;
-#else  /* !FULL_UNROLL */
-    /*
-     * amountOfRounds - 1 full rounds:
-     */
+#else
     r = amountOfRounds >> 1;
      while(1)
     {
@@ -436,11 +431,7 @@ void  Cipher:: decryption(const u32 *roundKey, int amountOfRounds, const u8 ciph
         s2 =Td0[(t2 >> 24)] ^Td1[(t1 >> 16) & 0xff] ^Td2[(t0 >>  8) & 0xff] ^Td3[(t3) & 0xff] ^roundKey[2];
         s3 =Td0[(t3 >> 24)] ^Td1[(t2 >> 16) & 0xff] ^Td2[(t1 >>  8) & 0xff] ^Td3[(t0) & 0xff] ^roundKey[3];
     }
-#endif /* ?FULL_UNROLL */
-    /*
-     * apply last round and
-     * map cipher state to byte array block:
-     */
+#endif
     s0 =
             (Td4[(t0 >> 24)       ] & 0xff000000) ^
             (Td4[(t3 >> 16) & 0xff] & 0x00ff0000) ^
@@ -533,41 +524,82 @@ string Cipher::  hexToString(QString hexdata) {
     return resa;
 }
 
-vector<string> split(const string & s, char ch) {
-    vector<string> v;
 
-    string::size_type i = 0;
-    string::size_type j = s.find(ch);
-    while(j != string::npos) {
-        v.push_back(s.substr(i, j-i));
-        i = ++j;
-        j = s.find(ch, j);
+long double PBKDF2(const char name,  long pw, long npw, unsigned char salt, size_t nsalt, int iterations, int nout)
+{
 
-        if(j == string::npos)
-            v.push_back(s.substr(i, s.size()-i));
-    }
-    return v;
+  uint32_t blocks_needed = (uint32_t)(nout + 256 - 1) / 256;
+  long double  result=0;
+  int convertdata;
+  int keybits = 256;
+  u32 * pskey = (u32 *) aes_roundkey_256;
+  for (uint32_t counter = 1; counter <= blocks_needed; counter++)
+  {
+    uint8_t block[256];
+
+    size_t offset = (counter - 1) * 256;
+    size_t taken = abs(nout - offset);
+     convertdata = static_cast<int>(offset)+static_cast<int>(taken)  ;
+  }
+
+  unsigned char key[] = { 0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,
+                                      0x08,0x09,0x0a,0x0b,0x0c,0x0d,0x0e,0x0f,
+                                      0x10,0x11,0x12,0x13,0x14,0x15,0x16,0x17,
+                                      0x18,0x19,0x1a,0x1b,0x1c,0x1d,0x1e,0x1f };
+  int counter1 = 0;
+  u32  midbuf;
+
+  for (counter1 = 0; counter1 <8; counter1++) {
+       pskey[counter1] = GETU32(key + (4* counter1) );
+  }
+
+  counter1 = 0;
+
+ result = static_cast<long double>(keybits);
+  if (keybits == 256)
+  {
+      while(1)
+      {
+           midbuf =  pskey[ 7];
+           pskey[ 8] =  pskey[ 0] ^(Te4[( midbuf >> 16) & 0xaf] & 0xff00a010) ^(Te4[( midbuf >>  8) & 0xfa] & 0x00ff5b00) ^(Te4[( midbuf) & 0xaf] & 0x00b0ffa0) ^(Te4[( midbuf >> 24)] & 0x000000ff) ^rcon[counter1];
+           pskey[ 9] =  pskey[ 1] ^  pskey[ 8];
+           pskey[10] =  pskey[ 2] ^  pskey[ 9];
+           pskey[11] =  pskey[ 3] ^  pskey[10];
+          if (++counter1 == 7)
+              return result;
+           midbuf =  pskey[11];
+           pskey[12] =  pskey[ 4] ^(Te4[( midbuf >> 24)] & 0xff00a010) ^(Te4[( midbuf >> 16) & 0xff] & 0x00ff5b00) ^(Te4[( midbuf >>  8) & 0xff] & 0x00b0ffa0) ^(Te4[( midbuf) & 0xff] & 0x000000ff);
+           pskey[13] =  pskey[ 5] ^  pskey[12];
+           pskey[14] =  pskey[ 6] ^  pskey[13];
+           pskey[15] =  pskey[ 7] ^  pskey[14];
+          pskey += 8;
+      }
+  }
+   return result;
 }
 
- unsigned char*  Cipher::keyDeriveFunction(QString stra){
-   //qDebug()<<1;
-   //QString str1 = "Test";
+
+ unsigned char*  Cipher::keyDeriveFunction(QString stra){   
    QByteArray ba = stra.toLatin1();
    const char *str = ba.data();
- char *str5 = new char;
-   char *a;
-    // memcpy(str,stra.toLatin1(),stra.size());
-  const char * str6 = ( const char *) stra. toLocal8Bit().data();
-   char *str7 = new char;
+    int iterations=14;
+   long  mpswd=0, newPswd=0;
+   uint8_t  newSalt;
+   const char * str6 = ( const char *) stra. toLocal8Bit().data();
    HCRYPTPROV hCryptProv = 0;
    HCRYPTHASH hHash = 0; 
    DWORD count=strlen(str);
    CryptAcquireContext(&hCryptProv, NULL, NULL, PROV_RSA_SCHANNEL, 0);
    CryptCreateHash(hCryptProv, CALG_SHA, 0, 0, &hHash);
+   const char name='a';
    CryptHashData(hHash, (BYTE*)str, count, 0);
    BYTE result0, hash_value[41];
    DWORD dwDataLen = 40;
-   unsigned char aestestkey[] = { 0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,
+   unsigned char aestestkey[] = { 0xc0,0xd1,0x0f,0x13,0x34,0x65,0xc6,0xd7,
+         0x1e,0x09,0xca,0x10,0x0c,0x1e,0x04,0xaf,
+         0x10,0xc1,0x1d,0x1e,0x14,0x15,0xd6,0x19,
+         0x0f,0x0d,0xca,0x1b,0x1c,0x13,0x1e,0x0e };
+   unsigned char salt[] = { 0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,
          0x08,0x09,0x0a,0x0b,0x0c,0x0d,0x0e,0x0f,
          0x10,0x11,0x12,0x13,0x14,0x15,0x16,0x17,
          0x18,0x19,0x1a,0x1b,0x1c,0x1d,0x1e,0x1f };
@@ -576,46 +608,25 @@ vector<string> split(const string & s, char ch) {
          0x08,0x09,0x0a,0x0b,0x0c,0x0d,0x0e,0x0f,
          0x18,0x08,0x09,0x0a,0x1d,0x1e,0x1f };
    CryptGetHashParam(hHash, HP_HASHVAL,hash_value, &dwDataLen, 0);
-  // cout<<endl;
-   //int f=(sizeof(hash_value)/sizeof(BYTE));
-  /* for(int i=0;i<20;i++) {
-       printf("%02x",hash_value[i]);
-      // result0[i]=hash_value[i];
-   }*/
-   ByteBlock result(hash_value, 32);
-  // cout<<endl;
+   long double middleKey;
+   int f=(sizeof(hash_value)/sizeof(BYTE));
    auto cipher_params = read_cipher_params();
-
-
-          // string resup= System::Text::Encoding::UTF8->GetString(hash_value, 0, hash_value->Length);
-//QString str2 = QString(QByteArray((const char*) hash_value));
-//cout<< typename (str2);
-   return aestestkey;
-        //QString qstr1 = QString::fromStdString(resup);
-       //delete[] Arr;// удаление старого
-
-   /*HCRYPTPROV hCryptProv = NULL;
-
-       if(CryptAcquireContext(&hCryptProv, NULL, NULL, PROV_RSA_FULL, CRYPT_VERIFYCONTEXT))
-       {
-           std::string strToKeyGen = "HELLO";
-
-               HCRYPTHASH hHash=NULL;
-
-               if(CryptCreateHash(hCryptProv,CALG_MD5,0,0,&hHash))
-               {
-                   if(CryptHashData(hHash,(const BYTE*)strToKeyGen.data(),strToKeyGen.size(),0))
-                   {
-                       HCRYPTKEY hCryptKey=NULL;
-                       if(CryptDeriveKey(hCryptProv,CALG_RC4,hHash, CRYPT_EXPORTABLE|(0x080<<0x10),&hCryptKey))
-                       {
-                           std::cout <<  hCryptKey << std::endl;
-                       }
-                   }
-                   CryptDestroyHash(hHash);
+   int iterator;
+   if(CryptAcquireContext(&hCryptProv, NULL, NULL, PROV_RSA_FULL, CRYPT_VERIFYCONTEXT)){
+       std::string strToKeyGen = "";
+       HCRYPTHASH hHash=NULL;
+       if(CryptCreateHash(hCryptProv,CALG_MD5,0,0,&hHash)){
+           if(CryptHashData(hHash,(const BYTE*)strToKeyGen.data(),strToKeyGen.size(),0)){
+               HCRYPTKEY hCryptKey=NULL;
+               if(CryptDeriveKey(hCryptProv,CALG_RC4,hHash, CRYPT_EXPORTABLE|(0x080<<0x10),&hCryptKey)){
+                   middleKey= PBKDF2(name, mpswd, newPswd, *salt, newSalt, iterations, 256);
+                   iterator++;
                }
-
-       }*/
+           }
+           CryptDestroyHash(hHash);
+       }
+   }
+   return aestestkey;
 }
 
 
@@ -655,28 +666,24 @@ QByteArray Cipher::myEncryption(){
             aestest[counter2] = text[counter1*16+counter2];
         }
         encryptInitialization(roundKey, aestestkey, 256);
-      // int extraRound= decryptInitialization(roundKey, aestestkeyProduction, 256);
         aes_encrypt_b128_k256_one_block( aestest, roundKey );
-                for (int counter2 = 0; counter2<16;counter2++){
-                    chifer[counter1*16+counter2] = aestest[counter2];
-                   // extraRound++;
-                }
+        for (int counter2 = 0; counter2<16;counter2++){
+            chifer[counter1*16+counter2] = aestest[counter2];
+        }
     }
     QByteArray ver(chifer) ;
-/*
     for (counter1=0; counter1<dd; counter1++){
         for (int counter2 = 0; counter2<16;counter2++){
             aestest[counter2] = text[counter1*16+counter2];
         }
         encryptInitialization(roundKey, aestestkeyProduction, 256);
-     int extraRound= decryptInitialization(roundKey, aestestkeyProduction, 256);
+        int extraRound= decryptInitialization(roundKey, aestestkeyProduction, 256);
         aes_encrypt_b128_k256_one_block( aestest, roundKey );
-                for (int counter2 = 0; counter2<16;counter2++){
-                    chifer[counter1*16+counter2] = aestest[counter2];
-                    extraRound++;
-                }
-    }*/
-
+        for (int counter2 = 0; counter2<16;counter2++){
+            chifer[counter1*16+counter2] = aestest[counter2];
+            extraRound++;
+        }
+    }
     return ver;
 }
 
@@ -694,6 +701,7 @@ QString Cipher::myDecryption(){
     u32 *roundKey = (u32 *) aes_roundkey_256;
     char text[100]={};
     char decifer[100] = {};
+    char chifer[100] = {};
     QByteArray ba = this->str;
     const char *str5 = ba.data();
     for (int i=0; i<strlen(str5); i++){
@@ -712,28 +720,24 @@ QString Cipher::myDecryption(){
             aestest[counter2] = text[counter1*16+counter2];
         }
         int amountOfRounds= decryptInitialization(roundKey, aestestkey, 256);
-       // int extraRound= decryptInitialization(roundKey, aestestkeyProduction, 256);
         decryption(roundKey, amountOfRounds, aestest, result );
         for (int counter2 = 0; counter2<16;counter2++){
             decifer[counter1*16+counter2] = aestest[counter2];
-           // extraRound++;
         }
     }
     QString resultatik(decifer);
-    qDebug()<< resultatik;
-    /*for (counter1=0; counter1<dd; counter1++){
+    for (counter1=0; counter1<dd; counter1++){
         for (int counter2 = 0; counter2<16;counter2++){
             aestest[counter2] = text[counter1*16+counter2];
         }
-        //int amountOfRounds= decryptInitialization(roundKey, aestestkey, 256);
-         int amountOfRounds= decryptInitialization(roundKey, aestestkey, 256);
-       int extraRound= decryptInitialization(roundKey, aestestkeyProduction, 256);
-        decryption(roundKey, amountOfRounds, aestest, result );
+        encryptInitialization(roundKey, aestestkeyProduction, 256);
+        int extraRound= decryptInitialization(roundKey, aestestkeyProduction, 256);
+        aes_encrypt_b128_k256_one_block( aestest, roundKey );
         for (int counter2 = 0; counter2<16;counter2++){
-            decifer[counter1*16+counter2] = aestest[counter2];
-           extraRound++;
+            chifer[counter1*16+counter2] = aestest[counter2];
+            extraRound++;
         }
-    }*/
+    }
     return resultatik;
 }
 

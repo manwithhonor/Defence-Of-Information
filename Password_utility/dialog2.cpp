@@ -47,13 +47,10 @@ void Dialog2::on_pushButton_3_clicked(){
                 password=password.mid(0,password.size()-1);
                 Cipher  str1= Cipher(password, service_name+PIN);
                 QString h=str1.myDecryption();
-
-               QStringList lst =  h.split('_');
-
+                QStringList lst =  h.split('_');
                 if(lst.count()>=2){
                     if( (lst[1]==service_name) || (lst[2].split(" ")[0].toInt()   ==PIN) ){
                         h=lst[0];
-
                         QMessageBox::information(this,"Report","Your password is:\n\n"+h+"\n\nIf you are not recognize your password, then entered PIN is not correct.");
                     }else{
                         QMessageBox::information(this,"Report","Your password wasn't found or entered service's name is wrong.");

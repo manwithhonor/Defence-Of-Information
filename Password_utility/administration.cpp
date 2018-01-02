@@ -39,8 +39,7 @@
 #include <limits>
 #include <stdexcept>
 #include <sstream>
-#include "Kuznyechik.h"
-#include "mycrypto.h"
+
 #include <vector>
 #include <string>
 

@@ -58,18 +58,17 @@ void Dialog_if_match::on_pushButton_3_clicked(){
                     }else{
                         old_password=old_password.mid(0,old_password.size()-1);
                         Cipher  str1= Cipher(old_password,service_name+old_PIN);
-                        QByteArray h = str1.myDecryption().toLocal8Bit();
-                        QList<QByteArray> lst =  h.split(' ');
+                        QString h = str1.myDecryption().toLocal8Bit();
+                        QStringList lst =  h.split('_');
                         if(lst.count()>=2){
-                            if(lst[1]==service_name){
+                              if( (lst[1]==service_name) || (lst[2].split(" ")[0].toInt()   ==old_PIN) ){
                                  Config cfg;
                                 cfg=  pswd.check_all(new_password, cfg);
                                 if (cfg.policy){
-                                //if (1){
-                                    new_password=new_password+" "+service_name;
-                                    str1= Cipher(new_password.toLatin1(),service_name+new_PIN);
-                                    h=str1.myEncryption();
-                                    pswd.replace_in_data_base(service_name,  h);
+                                    new_password=new_password+"_"+service_name+"_"+QString::number(new_PIN);
+                                    str1= Cipher(new_password.toLatin1(),service_name+"_"+QString::number(new_PIN));
+                                    QByteArray  hh=str1.myEncryption();
+                                    pswd.replace_in_data_base(service_name,  hh );
                                     QMessageBox::information(this,"Report","Your password was succesfully replaced");
                                 }
                             }else{

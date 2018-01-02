@@ -49,8 +49,7 @@
 #include <limits>
 #include <stdexcept>
 #include <sstream>
-#include "Kuznyechik.h"
-#include "mycrypto.h"
+
 using std::cout;
 using std::cerr;
 using std::endl;
@@ -789,7 +788,7 @@ static const u32 rcon[] =
                 0x01000000, 0x02000000, 0x04000000, 0x08000000,
                 0x10000000, 0x20000000, 0x40000000, 0x80000000,
                 0x1B000000, 0x36000000,
-                /* for 128-bit blocks, Rijndael never uses more than 10 rcon values */
+
         };
 
 
